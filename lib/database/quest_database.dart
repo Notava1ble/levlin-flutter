@@ -4,7 +4,7 @@ import 'package:levlin/models/player.dart';
 import 'package:levlin/models/quest.dart';
 import 'package:path_provider/path_provider.dart';
 
-class HabitDatabase extends ChangeNotifier {
+class QuestDatabase extends ChangeNotifier {
   static late Isar isar;
 
   // Initialize database
