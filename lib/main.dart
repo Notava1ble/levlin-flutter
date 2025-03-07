@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await QuestDatabase.init();
+  await QuestDatabase.createPlayer();
   runApp(
     MultiProvider(
       providers: [

@@ -5,5 +5,5 @@ extension ThemeColors on BuildContext {
   Color get primary => Theme.of(this).colorScheme.primary;
   Color get secondary => Theme.of(this).colorScheme.secondary;
   Color get tertiary => Theme.of(this).colorScheme.tertiary;
-  Color get inversePrimary => Theme.of(this).colorScheme.inversePrimary;
+  Color get onSurface => Theme.of(this).colorScheme.onSurface;
 }
