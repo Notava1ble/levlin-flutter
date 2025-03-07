@@ -40,7 +40,7 @@ class QuestDatabase extends ChangeNotifier {
     List<Player> fetchedPlayers = await isar.players.where().findAll();
     level = fetchedPlayers[0].level;
     xp = fetchedPlayers[0].xp;
-    xpNeeded = getNeededXpFromLevel(level);
+    xpNeeded = getNeededXpFromLevel(level + 1);
 
     notifyListeners();
   }

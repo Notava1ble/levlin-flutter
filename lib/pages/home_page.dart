@@ -16,6 +16,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     Provider.of<QuestDatabase>(context, listen: false).readQuests();
+    Provider.of<QuestDatabase>(context, listen: false).readPlayer();
     super.initState();
   }
 
@@ -38,14 +39,14 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.only(top: 24.0),
               child: Text(
-                level.toString(),
+                "$level $xp $xpNeeded",
                 style: GoogleFonts.poppins(
                   fontSize: 96,
                   fontWeight: FontWeight.w800,
                 ),
               ),
             ),
-            XpBar(xpObtained: xp, xpNeeded: xpNeeded),
+            XpBar(xpObtained: 8, xpNeeded: xpNeeded),
           ],
         ),
       ),

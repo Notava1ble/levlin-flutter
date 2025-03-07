@@ -8,11 +8,11 @@ class XpBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double deviceWidth = MediaQuery.of(context).size.width;
     return Center(
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 20),
         height: 20,
-        width: double.infinity,
+        width: deviceWidth - 40,
         decoration: BoxDecoration(
           color: context.secondary,
           borderRadius: BorderRadius.circular(6),
@@ -20,7 +20,7 @@ class XpBar extends StatelessWidget {
         child: Stack(
           children: [
             Container(
-              width: double.infinity * (xpObtained / xpNeeded),
+              width: (deviceWidth - 40) * (xpObtained / xpNeeded),
               height: 20,
               color: context.tertiary,
             ),
