@@ -35,7 +35,7 @@ class QuestDatabase extends ChangeNotifier {
   int xp = 0;
   int xpNeeded = 0;
 
-  // Real Player XP and LEVEL
+  // Read Player XP and LEVEL
   Future<void> readPlayer() async {
     List<Player> fetchedPlayers = await isar.players.where().findAll();
     level = fetchedPlayers[0].level;
@@ -43,6 +43,25 @@ class QuestDatabase extends ChangeNotifier {
     xpNeeded = getNeededXpFromLevel(level + 1);
 
     notifyListeners();
+  }
+
+  // Add XP
+  Future<void> addXp(int amount) async {
+    Player player = (await isar.players.where().findAll())[0];
+    await isar.writeTxn(() async {
+      int newXp = player.xp + amount;
+      if (newXp >= xpNeeded) {
+        while (newXp >= xpNeeded) {
+          player.level += 1;
+          newXp -= xpNeeded;
+          xpNeeded = getNeededXpFromLevel(player.level + 1);
+        }
+      }
+      player.xp = newXp;
+      isar.players.put(player);
+    });
+
+    readPlayer();
   }
 
   // Create a new quest

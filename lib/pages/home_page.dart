@@ -22,9 +22,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final int level = context.read<QuestDatabase>().level;
-    final int xp = context.read<QuestDatabase>().xp;
-    final int xpNeeded = context.read<QuestDatabase>().xpNeeded;
+    final questDatabase = context.watch<QuestDatabase>();
+    final int level = questDatabase.level;
+    final int xp = questDatabase.xp;
+    final int xpNeeded = questDatabase.xpNeeded;
     return Scaffold(
       appBar: AppBar(
         title: Text("Levlin", style: TextStyle(color: context.onSurface)),
@@ -39,14 +40,20 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.only(top: 24.0),
               child: Text(
-                "$level $xp $xpNeeded",
+                "$level",
                 style: GoogleFonts.poppins(
                   fontSize: 96,
                   fontWeight: FontWeight.w800,
                 ),
               ),
             ),
-            XpBar(xpObtained: 8, xpNeeded: xpNeeded),
+            XpBar(xpObtained: xp, xpNeeded: xpNeeded),
+            MaterialButton(
+              onPressed: () {
+                context.read<QuestDatabase>().addXp(5);
+              },
+              child: Text("Debug add 5 xp"),
+            ),
           ],
         ),
       ),
