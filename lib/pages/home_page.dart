@@ -27,37 +27,30 @@ class _HomePageState extends State<HomePage> {
     final int level = questDatabase.level;
     final int xp = questDatabase.xp;
     final int xpNeeded = questDatabase.xpNeeded;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Levlin", style: TextStyle(color: context.onSurface)),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
-      backgroundColor: context.surface,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 24.0),
-              child: Text(
-                "$level",
-                style: GoogleFonts.poppins(
-                  fontSize: 96,
-                  fontWeight: FontWeight.w800,
-                ),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 24.0),
+            child: Text(
+              "$level",
+              style: GoogleFonts.poppins(
+                fontSize: 96,
+                fontWeight: FontWeight.w800,
+                color: context.onSurface,
               ),
             ),
-            XpBar(xpObtained: xp, xpNeeded: xpNeeded),
-            MaterialButton(
-              onPressed: () {
-                context.read<QuestDatabase>().addXp(5);
-              },
-              child: Text("Debug add 5 xp"),
-            ),
-            _buildQuestList(),
-          ],
-        ),
+          ),
+          XpBar(xpObtained: xp, xpNeeded: xpNeeded),
+          MaterialButton(
+            onPressed: () {
+              context.read<QuestDatabase>().addXp(5);
+            },
+            child: Text("Debug add 5 xp"),
+          ),
+          _buildQuestList(),
+        ],
       ),
     );
   }
