@@ -2,6 +2,13 @@ import 'package:isar/isar.dart';
 
 part "quest.g.dart";
 
+@Embedded()
+class DayCompletion {
+  // You can adjust the type to suit your needs (e.g., DateTime, String, etc.)
+  late DateTime day;
+  late int count;
+}
+
 @Collection()
 class Quest {
   // habit id
@@ -13,5 +20,5 @@ class Quest {
   late int goal;
 
   // Completed days
-  late DateTime lastCompleted;
+  final List<DayCompletion> completions = [];
 }

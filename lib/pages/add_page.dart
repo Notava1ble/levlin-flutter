@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:levlin/database/quest_database.dart';
 import 'package:levlin/theme/theme_colors.dart';
+import 'package:provider/provider.dart';
 
 class AddPage extends StatefulWidget {
   const AddPage({super.key});
@@ -13,10 +15,14 @@ class _AddPageState extends State<AddPage> {
   final _formKey = GlobalKey<FormState>();
   String _dropdownValue = 'Repetitions';
 
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _goalController = TextEditingController();
+
   final List<String> _options = ['Repetitions', 'Distance', 'Duration'];
 
   @override
   Widget build(BuildContext context) {
+    final QuestDatabase questDatabase = context.watch<QuestDatabase>();
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -46,6 +52,7 @@ class _AddPageState extends State<AddPage> {
                         ),
                         const SizedBox(height: 10),
                         TextFormField(
+                          controller: _nameController,
                           style: GoogleFonts.roboto(
                             color: context.onSurface,
                             fontSize: 16,
@@ -124,6 +131,7 @@ class _AddPageState extends State<AddPage> {
                         ),
                         const SizedBox(height: 10),
                         TextFormField(
+                          controller: _goalController,
                           style: GoogleFonts.roboto(
                             color: context.onSurface,
                             fontSize: 16,
@@ -168,6 +176,11 @@ class _AddPageState extends State<AddPage> {
               if (_formKey.currentState!.validate()) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Adding quest...')),
+                );
+                questDatabase.addQuest(
+                  _nameController.text,
+                  _dropdownValue,
+                  int.parse(_goalController.text),
                 );
               }
             },

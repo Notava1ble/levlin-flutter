@@ -17,15 +17,16 @@ const QuestSchema = CollectionSchema(
   name: r'Quest',
   id: 4554541312824334418,
   properties: {
-    r'goal': PropertySchema(
+    r'completions': PropertySchema(
       id: 0,
+      name: r'completions',
+      type: IsarType.objectList,
+      target: r'DayCompletion',
+    ),
+    r'goal': PropertySchema(
+      id: 1,
       name: r'goal',
       type: IsarType.long,
-    ),
-    r'lastCompleted': PropertySchema(
-      id: 1,
-      name: r'lastCompleted',
-      type: IsarType.dateTime,
     ),
     r'name': PropertySchema(
       id: 2,
@@ -45,7 +46,7 @@ const QuestSchema = CollectionSchema(
   idName: r'id',
   indexes: {},
   links: {},
-  embeddedSchemas: {},
+  embeddedSchemas: {r'DayCompletion': DayCompletionSchema},
   getId: _questGetId,
   getLinks: _questGetLinks,
   attach: _questAttach,
@@ -58,6 +59,15 @@ int _questEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.completions.length * 3;
+  {
+    final offsets = allOffsets[DayCompletion]!;
+    for (var i = 0; i < object.completions.length; i++) {
+      final value = object.completions[i];
+      bytesCount +=
+          DayCompletionSchema.estimateSize(value, offsets, allOffsets);
+    }
+  }
   bytesCount += 3 + object.name.length * 3;
   bytesCount += 3 + object.type.length * 3;
   return bytesCount;
@@ -69,8 +79,13 @@ void _questSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.goal);
-  writer.writeDateTime(offsets[1], object.lastCompleted);
+  writer.writeObjectList<DayCompletion>(
+    offsets[0],
+    allOffsets,
+    DayCompletionSchema.serialize,
+    object.completions,
+  );
+  writer.writeLong(offsets[1], object.goal);
   writer.writeString(offsets[2], object.name);
   writer.writeString(offsets[3], object.type);
 }
@@ -82,9 +97,8 @@ Quest _questDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Quest();
-  object.goal = reader.readLong(offsets[0]);
+  object.goal = reader.readLong(offsets[1]);
   object.id = id;
-  object.lastCompleted = reader.readDateTime(offsets[1]);
   object.name = reader.readString(offsets[2]);
   object.type = reader.readString(offsets[3]);
   return object;
@@ -98,9 +112,15 @@ P _questDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLong(offset)) as P;
+      return (reader.readObjectList<DayCompletion>(
+            offset,
+            DayCompletionSchema.deserialize,
+            allOffsets,
+            DayCompletion(),
+          ) ??
+          []) as P;
     case 1:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 2:
       return (reader.readString(offset)) as P;
     case 3:
@@ -198,6 +218,91 @@ extension QuestQueryWhere on QueryBuilder<Quest, Quest, QWhereClause> {
 }
 
 extension QuestQueryFilter on QueryBuilder<Quest, Quest, QFilterCondition> {
+  QueryBuilder<Quest, Quest, QAfterFilterCondition> completionsLengthEqualTo(
+      int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'completions',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterFilterCondition> completionsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'completions',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterFilterCondition> completionsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'completions',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterFilterCondition> completionsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'completions',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterFilterCondition>
+      completionsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'completions',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<Quest, Quest, QAfterFilterCondition> completionsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'completions',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
   QueryBuilder<Quest, Quest, QAfterFilterCondition> goalEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -294,59 +399,6 @@ extension QuestQueryFilter on QueryBuilder<Quest, Quest, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<Quest, Quest, QAfterFilterCondition> lastCompletedEqualTo(
-      DateTime value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'lastCompleted',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Quest, Quest, QAfterFilterCondition> lastCompletedGreaterThan(
-    DateTime value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'lastCompleted',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Quest, Quest, QAfterFilterCondition> lastCompletedLessThan(
-    DateTime value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'lastCompleted',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Quest, Quest, QAfterFilterCondition> lastCompletedBetween(
-    DateTime lower,
-    DateTime upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'lastCompleted',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -612,7 +664,14 @@ extension QuestQueryFilter on QueryBuilder<Quest, Quest, QFilterCondition> {
   }
 }
 
-extension QuestQueryObject on QueryBuilder<Quest, Quest, QFilterCondition> {}
+extension QuestQueryObject on QueryBuilder<Quest, Quest, QFilterCondition> {
+  QueryBuilder<Quest, Quest, QAfterFilterCondition> completionsElement(
+      FilterQuery<DayCompletion> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'completions');
+    });
+  }
+}
 
 extension QuestQueryLinks on QueryBuilder<Quest, Quest, QFilterCondition> {}
 
@@ -626,18 +685,6 @@ extension QuestQuerySortBy on QueryBuilder<Quest, Quest, QSortBy> {
   QueryBuilder<Quest, Quest, QAfterSortBy> sortByGoalDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'goal', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Quest, Quest, QAfterSortBy> sortByLastCompleted() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'lastCompleted', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Quest, Quest, QAfterSortBy> sortByLastCompletedDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'lastCompleted', Sort.desc);
     });
   }
 
@@ -691,18 +738,6 @@ extension QuestQuerySortThenBy on QueryBuilder<Quest, Quest, QSortThenBy> {
     });
   }
 
-  QueryBuilder<Quest, Quest, QAfterSortBy> thenByLastCompleted() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'lastCompleted', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Quest, Quest, QAfterSortBy> thenByLastCompletedDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'lastCompleted', Sort.desc);
-    });
-  }
-
   QueryBuilder<Quest, Quest, QAfterSortBy> thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -735,12 +770,6 @@ extension QuestQueryWhereDistinct on QueryBuilder<Quest, Quest, QDistinct> {
     });
   }
 
-  QueryBuilder<Quest, Quest, QDistinct> distinctByLastCompleted() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'lastCompleted');
-    });
-  }
-
   QueryBuilder<Quest, Quest, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -763,15 +792,16 @@ extension QuestQueryProperty on QueryBuilder<Quest, Quest, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Quest, int, QQueryOperations> goalProperty() {
+  QueryBuilder<Quest, List<DayCompletion>, QQueryOperations>
+      completionsProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'goal');
+      return query.addPropertyName(r'completions');
     });
   }
 
-  QueryBuilder<Quest, DateTime, QQueryOperations> lastCompletedProperty() {
+  QueryBuilder<Quest, int, QQueryOperations> goalProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'lastCompleted');
+      return query.addPropertyName(r'goal');
     });
   }
 
@@ -787,3 +817,194 @@ extension QuestQueryProperty on QueryBuilder<Quest, Quest, QQueryProperty> {
     });
   }
 }
+
+// **************************************************************************
+// IsarEmbeddedGenerator
+// **************************************************************************
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+const DayCompletionSchema = Schema(
+  name: r'DayCompletion',
+  id: 1307549906805197552,
+  properties: {
+    r'count': PropertySchema(
+      id: 0,
+      name: r'count',
+      type: IsarType.long,
+    ),
+    r'day': PropertySchema(
+      id: 1,
+      name: r'day',
+      type: IsarType.dateTime,
+    )
+  },
+  estimateSize: _dayCompletionEstimateSize,
+  serialize: _dayCompletionSerialize,
+  deserialize: _dayCompletionDeserialize,
+  deserializeProp: _dayCompletionDeserializeProp,
+);
+
+int _dayCompletionEstimateSize(
+  DayCompletion object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  return bytesCount;
+}
+
+void _dayCompletionSerialize(
+  DayCompletion object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeLong(offsets[0], object.count);
+  writer.writeDateTime(offsets[1], object.day);
+}
+
+DayCompletion _dayCompletionDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = DayCompletion();
+  object.count = reader.readLong(offsets[0]);
+  object.day = reader.readDateTime(offsets[1]);
+  return object;
+}
+
+P _dayCompletionDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readLong(offset)) as P;
+    case 1:
+      return (reader.readDateTime(offset)) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+extension DayCompletionQueryFilter
+    on QueryBuilder<DayCompletion, DayCompletion, QFilterCondition> {
+  QueryBuilder<DayCompletion, DayCompletion, QAfterFilterCondition>
+      countEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'count',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayCompletion, DayCompletion, QAfterFilterCondition>
+      countGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'count',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayCompletion, DayCompletion, QAfterFilterCondition>
+      countLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'count',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayCompletion, DayCompletion, QAfterFilterCondition>
+      countBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'count',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<DayCompletion, DayCompletion, QAfterFilterCondition> dayEqualTo(
+      DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'day',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayCompletion, DayCompletion, QAfterFilterCondition>
+      dayGreaterThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'day',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayCompletion, DayCompletion, QAfterFilterCondition> dayLessThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'day',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayCompletion, DayCompletion, QAfterFilterCondition> dayBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'day',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+}
+
+extension DayCompletionQueryObject
+    on QueryBuilder<DayCompletion, DayCompletion, QFilterCondition> {}
