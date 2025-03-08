@@ -184,4 +184,30 @@ class QuestDatabase extends ChangeNotifier {
 
     readQuests();
   }
+
+  // Decrement Quest Progress for today
+  Future<void> decrementProgressToday(int questId, int amount) async {
+    final quest = await isar.quests.get(questId);
+
+    if (quest == null) return; // quest not found, exit early
+
+    DateTime today = DateTime.now();
+
+    for (var entry in quest.completions) {
+      if (isSameDay(entry.day, today)) {
+        int progress = entry.progress - amount;
+        if (progress >= 0) {
+          entry.progress = progress;
+          quest.completions = List.from(quest.completions);
+        }
+        break;
+      }
+    }
+
+    await isar.writeTxn(() async {
+      await isar.quests.put(quest);
+    });
+
+    readQuests();
+  }
 }

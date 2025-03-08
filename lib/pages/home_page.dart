@@ -69,7 +69,9 @@ class _HomePageState extends State<HomePage> {
           onAdd: () {
             context.read<QuestDatabase>().incrementProgressToday(quest.id, 10);
           },
-          onRemove: () {},
+          onRemove: () {
+            context.read<QuestDatabase>().decrementProgressToday(quest.id, 10);
+          },
         );
       },
     );
