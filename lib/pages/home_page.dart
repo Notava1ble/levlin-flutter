@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:levlin/components/quest_tile.dart';
 import 'package:levlin/components/xp_bar.dart';
 import 'package:levlin/database/quest_database.dart';
 import 'package:levlin/models/quest.dart';
 import 'package:levlin/theme/theme_colors.dart';
+import 'package:levlin/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -58,7 +60,11 @@ class _HomePageState extends State<HomePage> {
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         final Quest quest = currentQuests[index];
-        return Text(quest.name);
+        return QuestTile(
+          questName: quest.name,
+          questGoal: quest.goal,
+          questProgress: getProgressForToday(quest),
+        );
       },
     );
   }
