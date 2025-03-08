@@ -17,13 +17,18 @@ const PlayerSchema = CollectionSchema(
   name: r'Player',
   id: -1052842935974721688,
   properties: {
-    r'level': PropertySchema(
+    r'lastTimeCompleted': PropertySchema(
       id: 0,
+      name: r'lastTimeCompleted',
+      type: IsarType.dateTime,
+    ),
+    r'level': PropertySchema(
+      id: 1,
       name: r'level',
       type: IsarType.long,
     ),
     r'xp': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'xp',
       type: IsarType.long,
     )
@@ -57,8 +62,9 @@ void _playerSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.level);
-  writer.writeLong(offsets[1], object.xp);
+  writer.writeDateTime(offsets[0], object.lastTimeCompleted);
+  writer.writeLong(offsets[1], object.level);
+  writer.writeLong(offsets[2], object.xp);
 }
 
 Player _playerDeserialize(
@@ -69,8 +75,9 @@ Player _playerDeserialize(
 ) {
   final object = Player();
   object.id = id;
-  object.level = reader.readLong(offsets[0]);
-  object.xp = reader.readLong(offsets[1]);
+  object.lastTimeCompleted = reader.readDateTime(offsets[0]);
+  object.level = reader.readLong(offsets[1]);
+  object.xp = reader.readLong(offsets[2]);
   return object;
 }
 
@@ -82,8 +89,10 @@ P _playerDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLong(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 1:
+      return (reader.readLong(offset)) as P;
+    case 2:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -230,6 +239,60 @@ extension PlayerQueryFilter on QueryBuilder<Player, Player, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Player, Player, QAfterFilterCondition> lastTimeCompletedEqualTo(
+      DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'lastTimeCompleted',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition>
+      lastTimeCompletedGreaterThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'lastTimeCompleted',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> lastTimeCompletedLessThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'lastTimeCompleted',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition> lastTimeCompletedBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'lastTimeCompleted',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Player, Player, QAfterFilterCondition> levelEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -340,6 +403,18 @@ extension PlayerQueryObject on QueryBuilder<Player, Player, QFilterCondition> {}
 extension PlayerQueryLinks on QueryBuilder<Player, Player, QFilterCondition> {}
 
 extension PlayerQuerySortBy on QueryBuilder<Player, Player, QSortBy> {
+  QueryBuilder<Player, Player, QAfterSortBy> sortByLastTimeCompleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastTimeCompleted', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> sortByLastTimeCompletedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastTimeCompleted', Sort.desc);
+    });
+  }
+
   QueryBuilder<Player, Player, QAfterSortBy> sortByLevel() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'level', Sort.asc);
@@ -378,6 +453,18 @@ extension PlayerQuerySortThenBy on QueryBuilder<Player, Player, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Player, Player, QAfterSortBy> thenByLastTimeCompleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastTimeCompleted', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterSortBy> thenByLastTimeCompletedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastTimeCompleted', Sort.desc);
+    });
+  }
+
   QueryBuilder<Player, Player, QAfterSortBy> thenByLevel() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'level', Sort.asc);
@@ -404,6 +491,12 @@ extension PlayerQuerySortThenBy on QueryBuilder<Player, Player, QSortThenBy> {
 }
 
 extension PlayerQueryWhereDistinct on QueryBuilder<Player, Player, QDistinct> {
+  QueryBuilder<Player, Player, QDistinct> distinctByLastTimeCompleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'lastTimeCompleted');
+    });
+  }
+
   QueryBuilder<Player, Player, QDistinct> distinctByLevel() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'level');
@@ -421,6 +514,12 @@ extension PlayerQueryProperty on QueryBuilder<Player, Player, QQueryProperty> {
   QueryBuilder<Player, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<Player, DateTime, QQueryOperations> lastTimeCompletedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'lastTimeCompleted');
     });
   }
 

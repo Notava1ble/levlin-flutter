@@ -7,4 +7,5 @@ class Player {
   Id id = Isar.autoIncrement;
   int level = 1;
   int xp = 0;
+  late DateTime lastTimeCompleted;
 }
