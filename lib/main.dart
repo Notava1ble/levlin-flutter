@@ -3,7 +3,6 @@ import 'package:levlin/database/quest_database.dart';
 import 'package:levlin/pages/add_page.dart';
 import 'package:levlin/pages/home_page.dart';
 import 'package:levlin/pages/settings_page.dart';
-import 'package:levlin/theme/theme_colors.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
