@@ -161,6 +161,7 @@ class QuestDatabase extends ChangeNotifier {
     if (quest == null) return; // quest not found, exit early
 
     DateTime today = DateTime.now();
+    today = DateTime(today.year, today.month, today.day);
     bool found = false;
 
     for (var entry in quest.completions) {
@@ -175,7 +176,7 @@ class QuestDatabase extends ChangeNotifier {
       // convert completions to a mutable list and add new day completion
       quest.completions = List.from(quest.completions)..add(
         DayCompletion()
-          ..day = DateTime(today.year, today.month, today.day)
+          ..day = today
           ..progress = amount,
       );
     } else {
@@ -188,7 +189,14 @@ class QuestDatabase extends ChangeNotifier {
     });
 
     readQuests();
-    if (areAllTasksCompletedToday(currentQuests)) {
+    if (areAllTasksCompletedToday(currentQuests) &&
+        lastTimeCompleted != today) {
+      Player player = (await isar.players.where().findFirst())!;
+      await isar.writeTxn(() async {
+        player.lastTimeCompleted = today;
+        isar.players.put(player);
+      });
+      readPlayer();
       addXp((sqrt(currentQuests.length) * pow(level / 2, 2) + 50).round());
     }
   }

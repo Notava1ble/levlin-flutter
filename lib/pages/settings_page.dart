@@ -84,6 +84,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ],
           ),
+          Text("${questDatabase.lastTimeCompleted}"),
         ],
       ),
     );
