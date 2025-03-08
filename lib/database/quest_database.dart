@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:levlin/models/player.dart';
@@ -183,6 +185,9 @@ class QuestDatabase extends ChangeNotifier {
     });
 
     readQuests();
+    if (areAllTasksCompletedToday(currentQuests)) {
+      addXp((sqrt(currentQuests.length) * pow(level / 2, 2) + 50).round());
+    }
   }
 
   // Decrement Quest Progress for today

@@ -27,3 +27,15 @@ int getProgressForToday(Quest quest) {
 bool isSameDay(DateTime a, DateTime b) {
   return a.year == b.year && a.month == b.month && a.day == b.day;
 }
+
+bool areAllTasksCompletedToday(List<Quest> quests) {
+  bool isCompleted = true;
+  for (var quest in quests) {
+    int todayProgress = getProgressForToday(quest);
+    if (todayProgress < quest.goal) {
+      isCompleted = false;
+      break;
+    }
+  }
+  return isCompleted;
+}
