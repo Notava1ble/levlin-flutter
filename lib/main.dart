@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:levlin/database/quest_database.dart';
 import 'package:levlin/pages/add_page.dart';
 import 'package:levlin/pages/home_page.dart';
@@ -46,8 +47,16 @@ class _MainAppState extends State<MainApp> {
       home: Scaffold(
         appBar: AppBar(
           title: Text(
-            "Levlin",
-            style: TextStyle(color: questDatabase.theme.colorScheme.onSurface),
+            _selectedIndex == 0
+                ? "Levlin"
+                : _selectedIndex == 1
+                ? "Create Quest"
+                : "Settings",
+            style: GoogleFonts.poppins(
+              color: questDatabase.theme.colorScheme.onSurface,
+              fontSize: 36,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           elevation: 0,
           backgroundColor: Colors.transparent,
