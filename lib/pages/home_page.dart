@@ -54,26 +54,32 @@ class _HomePageState extends State<HomePage> {
   Widget _buildQuestList() {
     final questDatabase = context.watch<QuestDatabase>();
     List<Quest> currentQuests = questDatabase.currentQuests;
-    return ListView.builder(
-      padding: EdgeInsets.only(top: 36),
-      itemCount: currentQuests.length,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index) {
-        final Quest quest = currentQuests[index];
-        final int progressToday = getProgressForToday(quest);
-        return QuestTile(
-          questName: quest.name,
-          questGoal: quest.goal,
-          questProgress: progressToday,
-          onAdd: () {
-            context.read<QuestDatabase>().incrementProgressToday(quest.id, 10);
-          },
-          onRemove: () {
-            context.read<QuestDatabase>().decrementProgressToday(quest.id, 10);
-          },
-        );
-      },
+    return Expanded(
+      child: ListView.builder(
+        padding: EdgeInsets.only(top: 36),
+        itemCount: currentQuests.length,
+        itemBuilder: (context, index) {
+          final Quest quest = currentQuests[index];
+          final int progressToday = getProgressForToday(quest);
+          return QuestTile(
+            questName: quest.name,
+            questGoal: quest.goal,
+            questProgress: progressToday,
+            onAdd: () {
+              context.read<QuestDatabase>().incrementProgressToday(
+                quest.id,
+                10,
+              );
+            },
+            onRemove: () {
+              context.read<QuestDatabase>().decrementProgressToday(
+                quest.id,
+                10,
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
