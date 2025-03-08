@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:levlin/components/xp_bar.dart';
 import 'package:levlin/database/quest_database.dart';
+import 'package:levlin/models/quest.dart';
 import 'package:levlin/theme/theme_colors.dart';
 import 'package:provider/provider.dart';
 
@@ -54,9 +55,24 @@ class _HomePageState extends State<HomePage> {
               },
               child: Text("Debug add 5 xp"),
             ),
+            _buildQuestList(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildQuestList() {
+    final questDatabase = context.watch<QuestDatabase>();
+    List<Quest> currentQuests = questDatabase.currentQuests;
+    return ListView.builder(
+      itemCount: currentQuests.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        final Quest quest = currentQuests[index];
+        return Text(quest.name);
+      },
     );
   }
 }
