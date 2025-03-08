@@ -75,7 +75,7 @@ Player _playerDeserialize(
 ) {
   final object = Player();
   object.id = id;
-  object.lastTimeCompleted = reader.readDateTime(offsets[0]);
+  object.lastTimeCompleted = reader.readDateTimeOrNull(offsets[0]);
   object.level = reader.readLong(offsets[1]);
   object.xp = reader.readLong(offsets[2]);
   return object;
@@ -89,7 +89,7 @@ P _playerDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 1:
       return (reader.readLong(offset)) as P;
     case 2:
@@ -239,8 +239,26 @@ extension PlayerQueryFilter on QueryBuilder<Player, Player, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Player, Player, QAfterFilterCondition>
+      lastTimeCompletedIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'lastTimeCompleted',
+      ));
+    });
+  }
+
+  QueryBuilder<Player, Player, QAfterFilterCondition>
+      lastTimeCompletedIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'lastTimeCompleted',
+      ));
+    });
+  }
+
   QueryBuilder<Player, Player, QAfterFilterCondition> lastTimeCompletedEqualTo(
-      DateTime value) {
+      DateTime? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'lastTimeCompleted',
@@ -251,7 +269,7 @@ extension PlayerQueryFilter on QueryBuilder<Player, Player, QFilterCondition> {
 
   QueryBuilder<Player, Player, QAfterFilterCondition>
       lastTimeCompletedGreaterThan(
-    DateTime value, {
+    DateTime? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -264,7 +282,7 @@ extension PlayerQueryFilter on QueryBuilder<Player, Player, QFilterCondition> {
   }
 
   QueryBuilder<Player, Player, QAfterFilterCondition> lastTimeCompletedLessThan(
-    DateTime value, {
+    DateTime? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -277,8 +295,8 @@ extension PlayerQueryFilter on QueryBuilder<Player, Player, QFilterCondition> {
   }
 
   QueryBuilder<Player, Player, QAfterFilterCondition> lastTimeCompletedBetween(
-    DateTime lower,
-    DateTime upper, {
+    DateTime? lower,
+    DateTime? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -517,7 +535,8 @@ extension PlayerQueryProperty on QueryBuilder<Player, Player, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Player, DateTime, QQueryOperations> lastTimeCompletedProperty() {
+  QueryBuilder<Player, DateTime?, QQueryOperations>
+      lastTimeCompletedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'lastTimeCompleted');
     });

@@ -87,6 +87,7 @@ class QuestDatabase extends ChangeNotifier {
   int level = 1;
   int xp = 0;
   int xpNeeded = 0;
+  DateTime? lastTimeCompleted;
 
   // Read Player XP and LEVEL
   Future<void> readPlayer() async {
@@ -94,6 +95,8 @@ class QuestDatabase extends ChangeNotifier {
     level = fetchedPlayers[0].level;
     xp = fetchedPlayers[0].xp;
     xpNeeded = getNeededXpFromLevel(level + 1);
+
+    lastTimeCompleted = fetchedPlayers[0].lastTimeCompleted;
 
     notifyListeners();
   }
