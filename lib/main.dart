@@ -43,14 +43,17 @@ class _MainAppState extends State<MainApp> {
     final questDatabase = context.watch<QuestDatabase>();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: questDatabase.theme,
+      theme: Provider.of<QuestDatabase>(context).theme,
       home: Scaffold(
         appBar: AppBar(
-          title: Text("Levlin", style: TextStyle(color: context.onSurface)),
+          title: Text(
+            "Levlin",
+            style: TextStyle(color: questDatabase.theme.colorScheme.onSurface),
+          ),
           elevation: 0,
           backgroundColor: Colors.transparent,
         ),
-        backgroundColor: context.surface,
+        backgroundColor: questDatabase.theme.colorScheme.surface,
         bottomNavigationBar: Theme(
           data: Theme.of(context).copyWith(
             splashColor: Colors.transparent,
@@ -59,7 +62,9 @@ class _MainAppState extends State<MainApp> {
           ),
 
           child: BottomNavigationBar(
-            selectedItemColor: context.onSurface,
+            selectedItemColor: questDatabase.theme.colorScheme.onSurface,
+            backgroundColor: questDatabase.theme.colorScheme.surface,
+            unselectedItemColor: questDatabase.theme.colorScheme.primary,
             currentIndex: _selectedIndex,
             onTap: _onItemTapped,
             items: const [

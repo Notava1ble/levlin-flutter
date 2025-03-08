@@ -47,7 +47,10 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               context.read<QuestDatabase>().addXp(5);
             },
-            child: Text("Debug add 5 xp"),
+            child: Text(
+              "Debug add 5 xp",
+              style: TextStyle(color: context.onSurface),
+            ),
           ),
           _buildQuestList(),
         ],
