@@ -55,15 +55,21 @@ class _HomePageState extends State<HomePage> {
     final questDatabase = context.watch<QuestDatabase>();
     List<Quest> currentQuests = questDatabase.currentQuests;
     return ListView.builder(
+      padding: EdgeInsets.only(top: 36),
       itemCount: currentQuests.length,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         final Quest quest = currentQuests[index];
+        final int progressToday = getProgressForToday(quest);
         return QuestTile(
           questName: quest.name,
           questGoal: quest.goal,
-          questProgress: getProgressForToday(quest),
+          questProgress: progressToday,
+          onAdd: () {
+            context.read<QuestDatabase>().incrementProgressToday(quest.id, 10);
+          },
+          onRemove: () {},
         );
       },
     );

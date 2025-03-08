@@ -16,14 +16,14 @@ int getProgressForToday(Quest quest) {
   DateTime today = DateTime.now();
 
   for (var entry in quest.completions) {
-    if (_isSameDay(entry.day, today)) {
-      return entry.count;
+    if (isSameDay(entry.day, today)) {
+      return entry.progress;
     }
   }
 
   return 0;
 }
 
-bool _isSameDay(DateTime a, DateTime b) {
+bool isSameDay(DateTime a, DateTime b) {
   return a.year == b.year && a.month == b.month && a.day == b.day;
 }

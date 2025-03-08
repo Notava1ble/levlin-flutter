@@ -148,4 +148,40 @@ class QuestDatabase extends ChangeNotifier {
     });
     readQuests();
   }
+
+  // Increment Quest Progress for today
+  Future<void> incrementProgressToday(int questId, int amount) async {
+    final quest = await isar.quests.get(questId);
+
+    if (quest == null) return; // quest not found, exit early
+
+    DateTime today = DateTime.now();
+    bool found = false;
+
+    for (var entry in quest.completions) {
+      if (isSameDay(entry.day, today)) {
+        entry.progress += amount;
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      // convert completions to a mutable list and add new day completion
+      quest.completions = List.from(quest.completions)..add(
+        DayCompletion()
+          ..day = DateTime(today.year, today.month, today.day)
+          ..progress = amount,
+      );
+    } else {
+      // reassign completions to a new list so Isar detects the change
+      quest.completions = List.from(quest.completions);
+    }
+
+    await isar.writeTxn(() async {
+      await isar.quests.put(quest);
+    });
+
+    readQuests();
+  }
 }

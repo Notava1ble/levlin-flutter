@@ -6,7 +6,7 @@ part "quest.g.dart";
 class DayCompletion {
   // You can adjust the type to suit your needs (e.g., DateTime, String, etc.)
   late DateTime day;
-  late int count;
+  late int progress;
 }
 
 @Collection()
@@ -20,5 +20,5 @@ class Quest {
   late int goal;
 
   // Completed days
-  final List<DayCompletion> completions = [];
+  List<DayCompletion> completions = [];
 }

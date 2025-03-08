@@ -97,6 +97,13 @@ Quest _questDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Quest();
+  object.completions = reader.readObjectList<DayCompletion>(
+        offsets[0],
+        DayCompletionSchema.deserialize,
+        allOffsets,
+        DayCompletion(),
+      ) ??
+      [];
   object.goal = reader.readLong(offsets[1]);
   object.id = id;
   object.name = reader.readString(offsets[2]);
@@ -829,15 +836,15 @@ const DayCompletionSchema = Schema(
   name: r'DayCompletion',
   id: 1307549906805197552,
   properties: {
-    r'count': PropertySchema(
-      id: 0,
-      name: r'count',
-      type: IsarType.long,
-    ),
     r'day': PropertySchema(
-      id: 1,
+      id: 0,
       name: r'day',
       type: IsarType.dateTime,
+    ),
+    r'progress': PropertySchema(
+      id: 1,
+      name: r'progress',
+      type: IsarType.long,
     )
   },
   estimateSize: _dayCompletionEstimateSize,
@@ -861,8 +868,8 @@ void _dayCompletionSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.count);
-  writer.writeDateTime(offsets[1], object.day);
+  writer.writeDateTime(offsets[0], object.day);
+  writer.writeLong(offsets[1], object.progress);
 }
 
 DayCompletion _dayCompletionDeserialize(
@@ -872,8 +879,8 @@ DayCompletion _dayCompletionDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = DayCompletion();
-  object.count = reader.readLong(offsets[0]);
-  object.day = reader.readDateTime(offsets[1]);
+  object.day = reader.readDateTime(offsets[0]);
+  object.progress = reader.readLong(offsets[1]);
   return object;
 }
 
@@ -885,9 +892,9 @@ P _dayCompletionDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLong(offset)) as P;
-    case 1:
       return (reader.readDateTime(offset)) as P;
+    case 1:
+      return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -895,62 +902,6 @@ P _dayCompletionDeserializeProp<P>(
 
 extension DayCompletionQueryFilter
     on QueryBuilder<DayCompletion, DayCompletion, QFilterCondition> {
-  QueryBuilder<DayCompletion, DayCompletion, QAfterFilterCondition>
-      countEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'count',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<DayCompletion, DayCompletion, QAfterFilterCondition>
-      countGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'count',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<DayCompletion, DayCompletion, QAfterFilterCondition>
-      countLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'count',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<DayCompletion, DayCompletion, QAfterFilterCondition>
-      countBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'count',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
   QueryBuilder<DayCompletion, DayCompletion, QAfterFilterCondition> dayEqualTo(
       DateTime value) {
     return QueryBuilder.apply(this, (query) {
@@ -997,6 +948,62 @@ extension DayCompletionQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'day',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<DayCompletion, DayCompletion, QAfterFilterCondition>
+      progressEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'progress',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayCompletion, DayCompletion, QAfterFilterCondition>
+      progressGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'progress',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayCompletion, DayCompletion, QAfterFilterCondition>
+      progressLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'progress',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<DayCompletion, DayCompletion, QAfterFilterCondition>
+      progressBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'progress',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
