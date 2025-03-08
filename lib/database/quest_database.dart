@@ -23,17 +23,23 @@ class QuestDatabase extends ChangeNotifier {
 
   // Create Player
   static Future<void> createPlayer() async {
-    final createdPlayer =
-        Player()
-          ..level = 1
-          ..xp = 0;
-    await isar.writeTxn(() => isar.players.put(createdPlayer));
+    final existingPlayer = await isar.players.where().findFirst();
+    if (existingPlayer == null) {
+      final Player createdPlayer =
+          Player()
+            ..level = 1
+            ..xp = 0;
+      await isar.writeTxn(() => isar.players.put(createdPlayer));
+    }
   }
 
   // Create Settings
   static Future<void> createSettings() async {
-    final Settings createdSettings = Settings()..theme = "light";
-    await isar.writeTxn(() => isar.settings.put(createdSettings));
+    final existingSettings = await isar.settings.where().findFirst();
+    if (existingSettings == null) {
+      final Settings createdSettings = Settings()..theme = "light";
+      await isar.writeTxn(() => isar.settings.put(createdSettings));
+    }
   }
 
   /*
@@ -44,7 +50,7 @@ class QuestDatabase extends ChangeNotifier {
 
   ThemeData theme = lightMode;
   Future<void> readSettings() async {
-    Settings settings = (await isar.settings.where().findAll())[0];
+    Settings settings = (await isar.settings.where().findFirst())!;
     if (settings.theme == "light") {
       theme = lightMode;
     } else {
@@ -55,7 +61,7 @@ class QuestDatabase extends ChangeNotifier {
   }
 
   Future<void> toggleTheme() async {
-    Settings settings = (await isar.settings.where().findAll())[0];
+    Settings settings = (await isar.settings.where().findFirst())!;
     await isar.writeTxn(() async {
       if (settings.theme == "light") {
         settings.theme = "dark";
@@ -92,7 +98,7 @@ class QuestDatabase extends ChangeNotifier {
 
   // Add XP
   Future<void> addXp(int amount) async {
-    Player player = (await isar.players.where().findAll())[0];
+    Player player = (await isar.players.where().findFirst())!;
     await isar.writeTxn(() async {
       int newXp = player.xp + amount;
       if (newXp >= xpNeeded) {
