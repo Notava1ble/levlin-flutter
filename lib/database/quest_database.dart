@@ -196,7 +196,8 @@ class QuestDatabase extends ChangeNotifier {
     for (var entry in quest.completions) {
       if (isSameDay(entry.day, today)) {
         int progress = entry.progress - amount;
-        if (progress >= 0) {
+        int limit = quest.goal > entry.progress ? 0 : quest.goal;
+        if (progress >= limit) {
           entry.progress = progress;
           quest.completions = List.from(quest.completions);
         }
