@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:levlin/models/player.dart';
 import 'package:levlin/models/quest.dart';
+import 'package:levlin/models/settings.dart';
+import 'package:levlin/theme/dark_mode.dart';
+import 'package:levlin/theme/light_mode.dart';
 import 'package:levlin/utils/utils.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -11,7 +14,11 @@ class QuestDatabase extends ChangeNotifier {
   // Initialize database
   static Future<void> init() async {
     final dir = await getApplicationDocumentsDirectory();
-    isar = await Isar.open([QuestSchema, PlayerSchema], directory: dir.path);
+    isar = await Isar.open([
+      QuestSchema,
+      PlayerSchema,
+      SettingsSchema,
+    ], directory: dir.path);
   }
 
   // Create Player
@@ -21,6 +28,44 @@ class QuestDatabase extends ChangeNotifier {
           ..level = 1
           ..xp = 0;
     await isar.writeTxn(() => isar.players.put(createdPlayer));
+  }
+
+  // Create Settings
+  static Future<void> createSettings() async {
+    final Settings createdSettings = Settings()..theme = "light";
+    await isar.writeTxn(() => isar.settings.put(createdSettings));
+  }
+
+  /*
+
+    S E T T I N G S
+
+  */
+
+  ThemeData theme = lightMode;
+  Future<void> readSettings() async {
+    Settings settings = (await isar.settings.where().findAll())[0];
+    if (settings.theme == "light") {
+      theme = lightMode;
+    } else {
+      theme = darkMode;
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> toggleTheme() async {
+    Settings settings = (await isar.settings.where().findAll())[0];
+    await isar.writeTxn(() async {
+      if (settings.theme == "light") {
+        settings.theme = "dark";
+      } else {
+        settings.theme = "light";
+      }
+      isar.settings.put(settings);
+    });
+
+    readSettings();
   }
 
   /*

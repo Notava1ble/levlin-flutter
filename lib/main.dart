@@ -4,18 +4,19 @@ import 'package:levlin/pages/add_page.dart';
 import 'package:levlin/pages/home_page.dart';
 import 'package:levlin/pages/settings_page.dart';
 import 'package:levlin/theme/theme_colors.dart';
-import 'package:levlin/theme/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await QuestDatabase.init();
   await QuestDatabase.createPlayer();
+  await QuestDatabase.createSettings();
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => ThemeProvider()),
-        ChangeNotifierProvider(create: (context) => QuestDatabase()),
+        ChangeNotifierProvider(
+          create: (context) => QuestDatabase()..readSettings(),
+        ),
       ],
       child: MainApp(),
     ),
@@ -39,8 +40,10 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
+    final questDatabase = context.watch<QuestDatabase>();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: questDatabase.theme,
       home: Scaffold(
         appBar: AppBar(
           title: Text("Levlin", style: TextStyle(color: context.onSurface)),
