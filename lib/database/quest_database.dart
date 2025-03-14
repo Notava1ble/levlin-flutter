@@ -188,7 +188,9 @@ class QuestDatabase extends ChangeNotifier {
       await isar.quests.put(quest);
     });
 
-    readQuests();
+    // Make sure currentQuests is up-to-date by awaiting
+    await readQuests();
+
     if (areAllTasksCompletedToday(currentQuests) &&
         lastTimeCompleted != today) {
       Player player = (await isar.players.where().findFirst())!;
@@ -222,9 +224,25 @@ class QuestDatabase extends ChangeNotifier {
     }
 
     await isar.writeTxn(() async {
-      await isar.quests.put(quest);
+      isar.quests.put(quest);
     });
 
     readQuests();
+  }
+
+  Future<void> toggleIsCompletedTOday(bool? value) async {
+    Player player = (await isar.players.where().findFirst())!;
+    DateTime today = DateTime.now();
+    today = DateTime(today.year, today.month, today.day);
+
+    if (value == null || !value) {
+      player.lastTimeCompleted = today.subtract(Duration(days: 1));
+    } else {
+      player.lastTimeCompleted = today;
+    }
+    await isar.writeTxn(() async {
+      isar.players.put(player);
+    });
+    readPlayer();
   }
 }

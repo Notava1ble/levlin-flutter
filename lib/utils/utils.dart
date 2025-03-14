@@ -24,7 +24,10 @@ int getProgressForToday(Quest quest) {
   return 0;
 }
 
-bool isSameDay(DateTime a, DateTime b) {
+bool isSameDay(DateTime a, DateTime? b) {
+  if (b == null) {
+    return false;
+  }
   return a.year == b.year && a.month == b.month && a.day == b.day;
 }
 

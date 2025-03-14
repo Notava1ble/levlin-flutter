@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:levlin/database/quest_database.dart';
 import 'package:levlin/theme/dark_mode.dart';
 import 'package:levlin/theme/theme_colors.dart';
+import 'package:levlin/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -84,7 +85,20 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ],
           ),
-          Text("${questDatabase.lastTimeCompleted}"),
+          Row(
+            children: [
+              Text("${questDatabase.lastTimeCompleted}"),
+              Checkbox(
+                value: isSameDay(
+                  DateTime.now(),
+                  questDatabase.lastTimeCompleted,
+                ),
+                onChanged: (value) {
+                  context.read<QuestDatabase>().toggleIsCompletedTOday(value);
+                },
+              ),
+            ],
+          ),
         ],
       ),
     );
