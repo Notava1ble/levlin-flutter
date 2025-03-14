@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.3
   google_fonts: ^6.2.1
   isar:
     version: 3.1.8
