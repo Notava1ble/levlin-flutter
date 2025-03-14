@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -52,55 +53,61 @@ class _SettingsPageState extends State<SettingsPage> {
             decoration: BoxDecoration(color: context.primary),
           ),
 
-          // DEBUG settings
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              MaterialButton(
-                onPressed: () {
-                  context.read<QuestDatabase>().addXp(10);
-                },
-                child: Text(
-                  "Add 10 xp",
-                  style: TextStyle(color: context.onSurface),
-                ),
-              ),
-              MaterialButton(
-                onPressed: () {
-                  context.read<QuestDatabase>().addXp(100);
-                },
-                child: Text(
-                  "Add 100 xp",
-                  style: TextStyle(color: context.onSurface),
-                ),
-              ),
-              MaterialButton(
-                onPressed: () {
-                  context.read<QuestDatabase>().addXp(1000);
-                },
-                child: Text(
-                  "Add 1000 xp",
-                  style: TextStyle(color: context.onSurface),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Text("${questDatabase.lastTimeCompleted}"),
-              Checkbox(
-                value: isSameDay(
-                  DateTime.now(),
-                  questDatabase.lastTimeCompleted,
-                ),
-                onChanged: (value) {
-                  context.read<QuestDatabase>().toggleIsCompletedTOday(value);
-                },
-              ),
-            ],
-          ),
+          // Only show debug settings in debug mode
+          if (kDebugMode) _debugSetting() else SizedBox.shrink(),
         ],
       ),
+    );
+  }
+
+  Widget _debugSetting() {
+    final questDatabase = context.watch<QuestDatabase>();
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            MaterialButton(
+              onPressed: () {
+                context.read<QuestDatabase>().addXp(10);
+              },
+              child: Text(
+                "Add 10 xp",
+                style: TextStyle(color: context.onSurface),
+              ),
+            ),
+            MaterialButton(
+              onPressed: () {
+                context.read<QuestDatabase>().addXp(100);
+              },
+              child: Text(
+                "Add 100 xp",
+                style: TextStyle(color: context.onSurface),
+              ),
+            ),
+            MaterialButton(
+              onPressed: () {
+                context.read<QuestDatabase>().addXp(1000);
+              },
+              child: Text(
+                "Add 1000 xp",
+                style: TextStyle(color: context.onSurface),
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Text("${questDatabase.lastTimeCompleted}"),
+            Checkbox(
+              value: isSameDay(DateTime.now(), questDatabase.lastTimeCompleted),
+              onChanged: (value) {
+                context.read<QuestDatabase>().toggleIsCompletedTOday(value);
+              },
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
