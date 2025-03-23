@@ -36,7 +36,8 @@ class XpBar extends StatelessWidget {
               child: Text(
                 "$xpObtained/$xpNeeded",
                 style: GoogleFonts.poppins(
-                  color: Colors.white,
+                  color:
+                      xpObtained / xpNeeded > .6 ? Colors.white : Colors.black,
                   fontWeight: FontWeight.w800,
                   fontSize: 13,
                 ),
