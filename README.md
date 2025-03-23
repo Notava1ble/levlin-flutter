@@ -1,8 +1,13 @@
 # levlin
 
-The version 0.1.0 is out, with a lot of features missing.
+The version 0.2.0-alpha.1 is out, adding the unfinished quest info pop-up.
 
 ## Changelog
+### 0.1.0-alpha.1
+Uncompleted features
+1. Added the possibility to click on a quest name and view the completed days in a heatmap graph.
+2. Fixed the xp amount text color for more readability
+
 ### 0.1.0
 The fist release of the app, not feature complete, but working. Here's a list of what currenly works:
 1. A page to add quests, with name, type and goal.
