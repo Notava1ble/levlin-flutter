@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:levlin/components/sole_heatmap.dart';
 import 'package:levlin/database/quest_database.dart';
 import 'package:levlin/models/quest.dart';
 import 'package:levlin/theme/theme_colors.dart';
@@ -32,10 +33,10 @@ class _QuestDialogState extends State<QuestDialog> {
     super.initState();
   }
 
-  void editHabit(Quest quest) {
+  void editQuest(Quest quest) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(content: Text("Edit Habit")),
+      builder: (context) => AlertDialog(content: Text("Edit Quest")),
     );
   }
 
@@ -72,6 +73,13 @@ class _QuestDialogState extends State<QuestDialog> {
                     child: Icon(Icons.close, color: context.onSurface),
                   ),
                 ],
+              ),
+              SoleHeatMap(
+                startDate: DateTime.now().subtract(Duration(days: 365)),
+                datasets: {
+                  for (var item in quest.completions) item.day: item.progress,
+                },
+                itemGoal: quest.goal,
               ),
             ],
           ),
