@@ -30,9 +30,6 @@ class SoleHeatMap extends StatelessWidget {
             lightness,
           ).toColor();
     }
-    print(dynamicColorSets);
-    print(itemGoal);
-    print(datasets);
     return HeatMap(
       startDate: startDate,
       endDate: DateTime.now(),
