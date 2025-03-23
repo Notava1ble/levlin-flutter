@@ -7,6 +7,7 @@ class QuestTile extends StatelessWidget {
   final int questProgress;
   final void Function()? onAdd;
   final void Function()? onRemove;
+  final void Function()? showQuestInfo;
   const QuestTile({
     super.key,
     required this.questName,
@@ -14,6 +15,7 @@ class QuestTile extends StatelessWidget {
     required this.questProgress,
     required this.onAdd,
     required this.onRemove,
+    required this.showQuestInfo,
   });
 
   @override
@@ -24,9 +26,7 @@ class QuestTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           GestureDetector(
-            onTap: () {
-              // TODO: Design and implement Quest Detail Page
-            },
+            onTap: showQuestInfo,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

@@ -1,5 +1,8 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:levlin/components/quest_dialog.dart';
 import 'package:levlin/components/quest_tile.dart';
 import 'package:levlin/components/xp_bar.dart';
 import 'package:levlin/database/quest_database.dart';
@@ -21,6 +24,33 @@ class _HomePageState extends State<HomePage> {
     Provider.of<QuestDatabase>(context, listen: false).readQuests();
     Provider.of<QuestDatabase>(context, listen: false).readPlayer();
     super.initState();
+  }
+
+  void showQuestInfo(int index, Quest quest) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'Dialog',
+      barrierColor: context.surface.withValues(
+        alpha: 0.6,
+      ), // Semi-transparent overlay color
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return QuestDialog(
+          index: index,
+          // onComplete: (value) => checkQuestOnOff(value, quest),
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(
+            sigmaX: 5,
+            sigmaY: 5,
+          ), // Adjust the sigma values as needed
+          child: FadeTransition(opacity: animation, child: child),
+        );
+      },
+    );
   }
 
   @override
@@ -77,6 +107,7 @@ class _HomePageState extends State<HomePage> {
                 10,
               );
             },
+            showQuestInfo: () => showQuestInfo(index, quest),
           );
         },
       ),
