@@ -10,14 +10,24 @@ class XpBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
+    final double totalWidth = deviceWidth - 40;
     final double ratio =
         xpNeeded > 0 ? (xpObtained / xpNeeded).clamp(0.0, 1.0) : 0.0;
-    final double progressWidth = (deviceWidth - 40) * ratio;
+    final double progressWidth = totalWidth * ratio;
+
+    // Determine text background: if center falls on progress (green), use white.
+    // Otherwise, use context.secondary's luminance to decide.
+    final Color textColor =
+        progressWidth > (totalWidth / 2)
+            ? Colors.white
+            : context.secondary.computeLuminance() > 0.5
+            ? Colors.black
+            : Colors.white;
 
     return Center(
       child: Container(
         height: 20,
-        width: deviceWidth - 40,
+        width: totalWidth,
         decoration: BoxDecoration(
           color: context.secondary,
           borderRadius: BorderRadius.circular(6),
@@ -36,8 +46,7 @@ class XpBar extends StatelessWidget {
               child: Text(
                 "$xpObtained/$xpNeeded",
                 style: GoogleFonts.poppins(
-                  color:
-                      xpObtained / xpNeeded > .6 ? Colors.white : Colors.black,
+                  color: textColor,
                   fontWeight: FontWeight.w800,
                   fontSize: 13,
                 ),
