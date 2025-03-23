@@ -24,8 +24,6 @@ class QuestDialog extends StatefulWidget {
 }
 
 class _QuestDialogState extends State<QuestDialog> {
-  final TextEditingController _controller = TextEditingController();
-
   @override
   void initState() {
     Provider.of<QuestDatabase>(context, listen: false).readQuests();
