@@ -73,11 +73,41 @@ class _QuestDialogState extends State<QuestDialog> {
                 ],
               ),
               SoleHeatMap(
-                startDate: DateTime.now().subtract(Duration(days: 365)),
+                startDate: DateTime.now().subtract(Duration(days: 52 * 7)),
                 datasets: {
                   for (var item in quest.completions) item.day: item.progress,
                 },
                 itemGoal: quest.goal,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      // TODO: Navigate to quest details page
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 16,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: context.primary,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit, color: context.onSurface),
+                          SizedBox(width: 12),
+                          Text(
+                            "Edit Quest",
+                            style: GoogleFonts.roboto(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

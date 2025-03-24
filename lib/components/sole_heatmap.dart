@@ -38,10 +38,30 @@ class SoleHeatMap extends StatelessWidget {
             lightness,
           ).toColor();
     }
+
+    // Calculate an adjusted start date that aligns to the week's start (Monday)
+    final adjustedStartDate = startDate.subtract(
+      Duration(days: startDate.weekday - 1),
+    );
+
+    // New logic: Compute the end date (last week Saturday) and shift datasets accordingly.
+    final today = DateTime.now();
+    final currentWeekStart = DateTime(
+      today.year,
+      today.month,
+      today.day,
+    ).subtract(Duration(days: today.weekday - 1));
+    final lastWeekSaturday = currentWeekStart.subtract(Duration(days: 2));
+    final offsetDays = today.difference(lastWeekSaturday).inDays;
+    final shiftedDatasets = datasets?.map(
+      (date, count) =>
+          MapEntry(date.subtract(Duration(days: offsetDays)), count),
+    );
+
     return HeatMap(
-      startDate: startDate,
-      endDate: DateTime.now(),
-      datasets: datasets,
+      startDate: adjustedStartDate,
+      endDate: lastWeekSaturday, // end date changed to last week Saturday
+      datasets: shiftedDatasets, // use shifted dataset dates
       colorMode: ColorMode.color,
       defaultColor: context.secondary,
       textColor: Colors.white,
