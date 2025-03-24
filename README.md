@@ -3,6 +3,13 @@
 The version 0.2.0-alpha.1 is out, adding the unfinished quest info pop-up.
 
 ## Changelog
+### 0.2.0-alpha.2
+Bug fixes and new buttons which do nothing
+1. The heatmap is offsetted, meaning the columns are now full even if it's the middle of the week.
+2. Fixed a bug where the color in the heatmap would not show if the progress was less then 1/5 of the goal.
+3. Made the colors in the heatmap lighter
+4. Added edit quest and stats button to quest dialog. 
+
 ### 0.2.0-alpha.1
 Uncompleted features
 1. Added the possibility to click on a quest name and view the completed days in a heatmap graph.
