@@ -80,12 +80,10 @@ class _QuestDialogState extends State<QuestDialog> {
                 itemGoal: quest.goal,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      // TODO: Navigate to quest details page
-                    },
+                  Expanded(
+                    flex: 2,
                     child: Container(
                       padding: EdgeInsets.symmetric(
                         vertical: 12,
@@ -93,17 +91,57 @@ class _QuestDialogState extends State<QuestDialog> {
                       ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
-                        color: context.primary,
+                        color: context.onSurface,
                       ),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.edit, color: context.onSurface),
-                          SizedBox(width: 12),
                           Text(
                             "Edit Quest",
-                            style: GoogleFonts.roboto(fontSize: 16),
+                            style: GoogleFonts.roboto(
+                              fontSize: 16,
+                              color: context.surface,
+                            ),
                           ),
+                          SizedBox(width: 12),
+                          Icon(Icons.edit, color: context.surface),
                         ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(
+                    flex: 1,
+                    child: FittedBox(
+                      fit:
+                          BoxFit
+                              .scaleDown, // scales the whole container when necessary
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 16,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: context.onSurface,
+                            strokeAlign: BorderSide.strokeAlignInside,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Stats",
+                              style: GoogleFonts.roboto(fontSize: 16),
+                            ),
+                            SizedBox(width: 8),
+                            Icon(
+                              Icons.trending_up_rounded,
+                              color: context.onSurface,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
