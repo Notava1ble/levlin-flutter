@@ -17,11 +17,19 @@ class SoleHeatMap extends StatelessWidget {
   Widget build(BuildContext context) {
     // Compute dynamic colorsets based on progress relative to itemGoal
     final baseGreen = HSLColor.fromColor(Colors.green);
-    final Map<int, Color> dynamicColorSets = {};
+    final Map<int, Color> dynamicColorSets = {
+      1:
+          HSLColor.fromAHSL(
+            1.0,
+            baseGreen.hue,
+            baseGreen.saturation,
+            0.8,
+          ).toColor(),
+    };
     for (double t in [0.2, 0.4, 0.6, 0.8, 1.0]) {
       int thresholdValue = (itemGoal * t).ceil();
       // Lightness varies from 0.3 to 0.7 as t increases
-      double lightness = 0.7 - (0.4 * t);
+      double lightness = 0.8 - (0.3 * t);
       dynamicColorSets[thresholdValue] =
           HSLColor.fromAHSL(
             1.0,

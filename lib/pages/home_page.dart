@@ -36,10 +36,7 @@ class _HomePageState extends State<HomePage> {
       ), // Semi-transparent overlay color
       transitionDuration: const Duration(milliseconds: 300),
       pageBuilder: (context, animation, secondaryAnimation) {
-        return QuestDialog(
-          index: index,
-          // onComplete: (value) => checkQuestOnOff(value, quest),
-        );
+        return QuestDialog(index: index);
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         return BackdropFilter(
